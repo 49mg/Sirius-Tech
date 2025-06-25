@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sirius Tech</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Cairo -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <!-- Three.js for animated background -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <style>
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Cairo', sans-serif; background-color: #0a0a1a; color: #e0e0e0; overflow-x: hidden; }
+        #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        #preloader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #0a0a1a; z-index: 10000; display: flex; justify-content: center; align-items: center; transition: opacity 0.8s ease, visibility 0.8s ease; }
+        #preloader .loader { width: 50px; height: 50px; border: 4px solid #1f2937; border-top: 4px solid #38bdf8; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .glass-card { background: rgba(17, 24, 39, 0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .glow-button { transition: all 0.3s ease; box-shadow: 0 0 5px rgba(56, 189, 248, 0.4), 0 0 10px rgba(56, 189, 248, 0.3); }
+        .glow-button:hover { box-shadow: 0 0 15px rgba(56, 189, 248, 0.8), 0 0 25px rgba(56, 189, 248, 0.6); transform: translateY(-2px); }
+        .section-title { text-shadow: 0 0 10px rgba(56, 189, 248, 0.3); }
+        .fade-in-up { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        .fade-in-up.visible { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body class="antialiased">
+
+<!-- Preloader -->
+<div id="preloader"><div class="loader"></div></div>
+
+<!-- Animated Background -->
+<canvas id="bg-canvas"></canvas>
+
+<div class="relative z-10">
+
+    <!-- Header -->
+    <header id="header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div id="company-name" class="text-2xl font-bold text-white tracking-wider" style="text-shadow: 0 0 8px rgba(56, 189, 248, 0.7);"></div>
+                <nav class="hidden md:flex items-center space-x-8 space-x-reverse" id="nav-links"></nav>
+                <a href="#contact" id="header-contact-button" class="hidden md:block bg-sky-500 text-white font-bold py-2 px-6 rounded-lg glow-button"></a>
+                <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+            <div id="mobile-menu" class="hidden md:hidden mt-4 bg-gray-900/80 rounded-lg p-4"></div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="hero" class="min-h-screen flex items-center justify-center text-center px-4">
+            <div class="max-w-4xl">
+                <h1 id="hero-heading" class="text-4xl md:text-6xl lg:text-4xl font-extrabold text-white leading-tight mb-4" style="text-shadow: 0 0 15px rgba(56, 189, 248, 0.4);"></h1>
+                <p id="hero-subheading" class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-8"></p>
+                <a href="#services" id="hero-button" class="bg-sky-500 text-white font-bold py-3 px-10 rounded-lg text-lg glow-button inline-block"></a>
+            </div>
+        </section>
+
+        <!-- About Us Section -->
+        <section id="about" class="py-20 px-4 overflow-hidden">
+            <div class="container mx-auto">
+                <div class="text-center mb-12 fade-in-up">
+                    <h2 id="about-heading" class="text-4xl md:text-5xl font-bold section-title"></h2>
+                </div>
+                <div class="grid md:grid-cols-2 gap-10 items-center">
+                    <div class="fade-in-up">
+                        <p id="about-text" class="text-lg text-gray-300 mb-6"></p>
+                        <div id="about-points" class="space-y-4"></div>
+                    </div>
+                    <div class="fade-in-up">
+                        <img id="about-image" src="" alt="About Sirius Tech" class="rounded-lg shadow-2xl shadow-sky-500/10 w-full h-auto object-cover">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Why Choose Us Section -->
+        <section id="why-choose-us" class="py-20 px-4 bg-black bg-opacity-20">
+            <div class="container mx-auto">
+                <div class="text-center mb-12 fade-in-up">
+                    <h2 id="why-us-heading" class="text-4xl md:text-5xl font-bold section-title"></h2>
+                </div>
+                <div id="why-us-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Features will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="py-20 px-4">
+            <div class="container mx-auto">
+                <div class="text-center mb-12 fade-in-up">
+                    <h2 id="services-heading" class="text-4xl md:text-5xl font-bold section-title"></h2>
+                </div>
+                <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+            </div>
+        </section>
+
+        <!-- Portfolio Section -->
+        <section id="portfolio" class="py-20 px-4 bg-black bg-opacity-20">
+            <div class="container mx-auto">
+                <div class="text-center mb-12 fade-in-up">
+                    <h2 id="portfolio-heading" class="text-4xl md:text-5xl font-bold section-title"></h2>
+                </div>
+                <div id="portfolio-filters" class="flex justify-center flex-wrap gap-2 mb-10 fade-in-up"></div>
+                <div id="portfolio-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+                <div class="text-center mt-12 fade-in-up">
+                    <a href="#contact" id="more-projects-button" class="bg-transparent border-2 border-sky-500 text-sky-500 font-bold py-3 px-10 rounded-lg text-lg transition-all duration-300 hover:bg-sky-500 hover:text-white hover:shadow-lg hover:shadow-sky-500/30"></a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Contact Section -->
+    <footer id="contact" class="py-20 px-4 bg-gray-900/50">
+        <div class="container mx-auto">
+            <div class="text-center mb-12 fade-in-up">
+                <h2 id="contact-heading" class="text-4xl md:text-5xl font-bold section-title"></h2>
+                <p id="contact-subheading" class="mt-4 text-lg text-gray-300 max-w-3xl mx-auto"></p>
+            </div>
+            <div id="contact-info-container" class="flex flex-col md:flex-row justify-center items-center gap-8 md:gap-12 mb-12 fade-in-up"></div>
+            <div class="mt-12 text-center border-t border-gray-700 pt-8">
+                <p id="footer-copyright"></p>
+                <p id="footer-design" class="text-sm"></p>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<script type="module">
+    // Import the configuration object from the external file
+    import { websiteConfig } from './config.js';
+
+    // --- DYNAMIC CONTENT LOADER ---
+    document.addEventListener('DOMContentLoaded', () => {
+        document.title = websiteConfig.siteTitle;
+
+        // Header
+        document.getElementById('company-name').textContent = websiteConfig.companyName;
+        const navLinksContainer = document.getElementById('nav-links');
+        const mobileMenuContainer = document.getElementById('mobile-menu');
+        navLinksContainer.innerHTML = '';
+        mobileMenuContainer.innerHTML = '';
+        websiteConfig.navLinks.forEach(link => {
+            const a = document.createElement('a');
+            a.href = link.href; a.textContent = link.text;
+            a.className = 'text-gray-300 hover:text-sky-400 transition-colors duration-300 px-2';
+            navLinksContainer.appendChild(a);
+            const mobileA = a.cloneNode(true);
+            mobileA.className = 'block text-white py-2 text-center hover:bg-gray-700 rounded';
+            mobileMenuContainer.appendChild(mobileA);
+        });
+        document.getElementById('header-contact-button').textContent = websiteConfig.headerContactButtonText;
+
+        // Hero
+        document.getElementById('hero-heading').textContent = websiteConfig.hero.heading;
+        document.getElementById('hero-subheading').textContent = websiteConfig.hero.subheading;
+        document.getElementById('hero-button').textContent = websiteConfig.hero.buttonText;
+        document.getElementById('hero-button').href = websiteConfig.navLinks.find(l => l.text === 'خدماتنا').href;
+
+        // About Us
+        const about = websiteConfig.about;
+        document.getElementById('about-heading').textContent = about.heading;
+        document.getElementById('about-text').textContent = about.text;
+        document.getElementById('about-image').src = about.imagePlaceholder;
+        const pointsContainer = document.getElementById('about-points');
+        pointsContainer.innerHTML = '';
+        about.points.forEach(point => {
+            const el = document.createElement('div');
+            el.className = 'flex items-start gap-4';
+            el.innerHTML = `<span class="text-2xl text-sky-400 mt-1">${point.icon}</span><div><h4 class="font-bold text-white text-lg">${point.title}</h4><p class="text-gray-400">${point.description}</p></div>`;
+            pointsContainer.appendChild(el);
+        });
+
+        // Why Choose Us
+        const whyUs = websiteConfig.whyChooseUs;
+        document.getElementById('why-us-heading').textContent = whyUs.heading;
+        const whyUsGrid = document.getElementById('why-us-grid');
+        whyUsGrid.innerHTML = '';
+        whyUs.features.forEach(feature => {
+            const el = document.createElement('div');
+            el.className = 'glass-card p-8 rounded-lg text-center flex flex-col items-center gap-4 fade-in-up';
+            el.innerHTML = `
+                    <div class="w-16 h-16 flex items-center justify-center rounded-full bg-sky-900/50 mb-4 border border-sky-700">
+                        <svg class="w-8 h-8 text-sky-400" fill="currentColor" viewBox="0 0 24 24"><path d="${feature.iconPath}"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white">${feature.title}</h3>
+                    <p class="text-gray-400">${feature.description}</p>
+                `;
+            whyUsGrid.appendChild(el);
+        });
+
+        // Services
+        const services = websiteConfig.services;
+        document.getElementById('services-heading').textContent = services.heading;
+        const servicesGrid = document.getElementById('services-grid');
+        servicesGrid.innerHTML = '';
+        services.items.forEach(item => {
+            const el = document.createElement('div');
+            el.className = 'glass-card p-8 rounded-lg text-center flex flex-col items-center gap-4 fade-in-up';
+            el.innerHTML = `<div class="text-5xl">${item.icon}</div><h3 class="text-xl font-bold text-white">${item.title}</h3><p class="text-gray-400">${item.description}</p>`;
+            servicesGrid.appendChild(el);
+        });
+
+        // Portfolio
+        const portfolio = websiteConfig.portfolio;
+        document.getElementById('portfolio-heading').textContent = portfolio.heading;
+        const filtersContainer = document.getElementById('portfolio-filters');
+        filtersContainer.innerHTML = '';
+        portfolio.categories.forEach(cat => {
+            const button = document.createElement('button');
+            button.textContent = cat.name; button.dataset.filter = cat.id;
+            button.className = 'px-4 py-2 text-sm font-semibold rounded-md transition-all duration-300 glass-card text-gray-300 hover:text-white hover:bg-sky-500/50';
+            if (cat.id === 'all') button.classList.add('bg-sky-500/50', 'text-white');
+            filtersContainer.appendChild(button);
+        });
+        const grid = document.getElementById('portfolio-grid');
+        const renderProjects = (filter = 'all') => {
+            grid.innerHTML = '';
+            const filtered = filter === 'all' ? portfolio.projects : portfolio.projects.filter(p => p.category === filter);
+            filtered.forEach(project => {
+                const card = document.createElement('div');
+                card.className = 'glass-card rounded-lg overflow-hidden p-6 flex flex-col group fade-in-up';
+                card.innerHTML = `<h3 class="text-xl font-bold text-white mb-2">${project.title}</h3><p class="text-gray-400 flex-grow mb-4">${project.description}</p><a href="${project.detailsLink}" class="text-sky-400 font-semibold self-start group-hover:underline">عرض التفاصيل <span class="transition-transform duration-300 inline-block group-hover:translate-x-1 rtl:group-hover:-translate-x-1">&rarr;</span></a>`;
+                grid.appendChild(card);
+            });
+            observeSections();
+        };
+        filtersContainer.addEventListener('click', e => {
+            if (e.target.tagName === 'BUTTON') {
+                document.querySelector('#portfolio-filters button.bg-sky-500\\/50').classList.remove('bg-sky-500/50', 'text-white');
+                e.target.classList.add('bg-sky-500/50', 'text-white');
+                renderProjects(e.target.dataset.filter);
+            }
+        });
+        renderProjects();
+        document.getElementById('more-projects-button').textContent = portfolio.moreProjectsButtonText;
+
+        // Contact
+        const contact = websiteConfig.contact;
+        document.getElementById('contact-heading').textContent = contact.heading;
+        document.getElementById('contact-subheading').textContent = contact.subheading;
+        const contactInfoContainer = document.getElementById('contact-info-container');
+        contactInfoContainer.innerHTML = '';
+        contact.contactInfo.forEach(info => {
+            const el = document.createElement('a');
+            el.href = info.text.includes('@') ? `mailto:${info.text}` : `tel:${info.text.replace(/\s/g, '')}`;
+            el.className = 'flex items-center gap-4 text-gray-300 hover:text-sky-400 transition-colors duration-300 text-lg';
+            el.innerHTML = `<span class="w-10 h-10 flex items-center justify-center rounded-full glass-card"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="${info.iconPath}"></path></svg></span><span>${info.text}</span>`;
+            contactInfoContainer.appendChild(el);
+        });
+
+        // Footer credits
+        document.getElementById('footer-copyright').textContent = websiteConfig.footer.copyrightText;
+        document.getElementById('footer-design').textContent = websiteConfig.footer.designedByText;
+
+        observeSections();
+    });
+
+    // --- PRELOADER ---
+    window.addEventListener('load', () => {
+        document.getElementById('preloader').style.opacity = '0';
+        document.getElementById('preloader').style.visibility = 'hidden';
+    });
+
+    // --- ANIMATED BACKGROUND ---
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg-canvas'), alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    const particlesGeom = new THREE.BufferGeometry();
+    const positions = new Float32Array(5000 * 3);
+    for (let i = 0; i < positions.length; i++) { positions[i] = (Math.random() - 0.5) * 1000; }
+    particlesGeom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const particleSystem = new THREE.Points(particlesGeom, new THREE.PointsMaterial({ size: 0.5, color: 0x38bdf8, transparent: true, blending: THREE.AdditiveBlending, opacity: 0.7 }));
+    scene.add(particleSystem);
+    camera.position.z = 5;
+    let mouseX = 0, mouseY = 0;
+    document.addEventListener('mousemove', e => { mouseX = (e.clientX - window.innerWidth/2)/100; mouseY = (e.clientY-window.innerHeight/2)/100; });
+    const animate = () => {
+        requestAnimationFrame(animate);
+        particleSystem.rotation.y += 0.0001;
+        camera.position.x += (mouseX - camera.position.x) * 0.01;
+        camera.position.y += (-mouseY - camera.position.y) * 0.01;
+        camera.lookAt(scene.position);
+        renderer.render(scene, camera);
+    };
+    animate();
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // --- HEADER SCROLL BEHAVIOR ---
+    window.addEventListener('scroll', () => {
+        const header = document.getElementById('header');
+        if (window.scrollY > 50) header.classList.add('bg-gray-900/80', 'backdrop-blur-sm', 'shadow-lg');
+        else header.classList.remove('bg-gray-900/80', 'backdrop-blur-sm', 'shadow-lg');
+    });
+
+    // --- MOBILE MENU TOGGLE ---
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+    mobileMenu.addEventListener('click', e => { if (e.target.tagName === 'A') mobileMenu.classList.add('hidden'); });
+
+    // --- SCROLL ANIMATIONS ---
+    let observer;
+    function observeSections() {
+        if (observer) observer.disconnect();
+        observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
+    }
+</script>
+</body>
+</html>
